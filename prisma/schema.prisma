@@ -1,0 +1,198 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum PaymentState {
+  PENDING
+  AUTHORIZED
+  COMPLETED
+  CANCELLED
+  DECLINED
+  FAILED
+}
+
+enum FulfillmentState {
+  PENDING_PROCESSING
+  PROCESSING
+  SHIPPED
+  DELAYED
+  DELIVERED
+  CANCELLED
+}
+
+enum DriftStatus {
+  NONE
+  DRIFT_DETECTED
+  RESOLVED
+}
+
+enum EventSource {
+  PAYPAL_SANDBOX
+  APP_ACTION
+  AI_GUARDED_AGENT
+  DEMO_SIMULATION
+  ZAPIER_WEBHOOK
+}
+
+model Product {
+  id                   String   @id @default(cuid())
+  name                 String
+  sku                  String   @unique
+  description          String
+  priceCents           Int
+  currency             String   @default("USD")
+  imageUrl             String
+  stockCount           Int      @default(100)
+  category             String   @default("General")
+  returnPolicy         String
+  deliveryEstimateDays String
+  shippingOptionsJson  String   // JSON array of options: { id, name, priceCents, daysEstimate }
+  isDemo               Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  orders               Order[]
+}
+
+model Order {
+  id                 String             @id @default(cuid())
+  orderNumber        String             @unique
+  buyerName          String
+  buyerEmail         String
+  buyerRequirement   String?
+  productId          String
+  product            Product            @relation(fields: [productId], references: [id])
+  quantity           Int                @default(1)
+  subtotalCents      Int
+  shippingFeeCents   Int
+  totalCents         Int
+  currency           String             @default("USD")
+  shippingOptionId   String
+  shippingOptionName String
+  paymentState       PaymentState       @default(PENDING)
+  fulfillmentState   FulfillmentState   @default(PENDING_PROCESSING)
+  driftStatus        DriftStatus        @default(NONE)
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  promiseCard        PromiseCard?
+  payment            Payment?
+  fulfillmentEvents  FulfillmentEvent[]
+  driftAlerts        DriftAlert[]
+  auditEvents        AuditEvent[]
+
+  @@index([paymentState])
+  @@index([fulfillmentState])
+  @@index([driftStatus])
+  @@index([createdAt])
+}
+
+model PromiseCard {
+  id                     String    @id @default(cuid())
+  orderId                String    @unique
+  order                  Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  version                Int       @default(1)
+  hash                   String
+  productName            String
+  quantity               Int
+  totalCents             Int
+  currency               String    @default("USD")
+  shippingOptionName     String
+  buyerRequirement       String?
+  sellerDeliveryEstimate String
+  returnPolicySummary    String
+  warningsJson           String?   // JSON array of strings
+  agreedAt               DateTime  @default(now())
+  isImmutable            Boolean   @default(true)
+  demoNotice             String    @default("Proofloop Sandbox Demo Order - No real funds or real-world shipment.")
+  createdAt              DateTime  @default(now())
+}
+
+model Payment {
+  id              String       @id @default(cuid())
+  orderId         String       @unique
+  order           Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  paypalOrderId   String?      @unique
+  paypalCaptureId String?      @unique
+  status          PaymentState @default(PENDING)
+  amountCents     Int
+  currency        String       @default("USD")
+  paymentMethod   String       @default("PAYPAL_SANDBOX")
+  isSimulation    Boolean      @default(false)
+  rawResponseJson String?
+  idempotencyKey  String?      @unique
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([status])
+}
+
+model FulfillmentEvent {
+  id                String           @id @default(cuid())
+  orderId           String
+  order             Order            @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status            FulfillmentState
+  carrier           String?
+  trackingNumber    String?
+  note              String?
+  estimatedDelivery DateTime?
+  isSimulation      Boolean          @default(true)
+  createdBy         String           @default("Seller Demo")
+  createdAt         DateTime         @default(now())
+
+  driftAlerts       DriftAlert[]
+
+  @@index([orderId])
+  @@index([createdAt])
+}
+
+model DriftAlert {
+  id                     String            @id @default(cuid())
+  orderId                String
+  order                  Order             @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  fulfillmentEventId     String?
+  fulfillmentEvent       FulfillmentEvent? @relation(fields: [fulfillmentEventId], references: [id])
+  title                  String
+  severity               String            @default("WARNING") // INFO, WARNING, CRITICAL
+  agreedSnapshotJson     String            // JSON of what was promised
+  currentUpdateSnapshot  String            // JSON of what fulfillment updated
+  mismatchExplanation    String
+  suggestedMessage       String
+  isResolved             Boolean           @default(false)
+  resolvedAt             DateTime?
+  createdAt              DateTime          @default(now())
+
+  @@index([orderId])
+}
+
+model AuditEvent {
+  id          String      @id @default(cuid())
+  orderId     String?
+  order       Order?      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  eventType   String
+  source      EventSource @default(APP_ACTION)
+  description String
+  metadataJson String?
+  createdAt   DateTime    @default(now())
+
+  @@index([orderId])
+  @@index([createdAt])
+  @@index([source])
+}
+
+model WebhookDelivery {
+  id           String      @id @default(cuid())
+  eventType    String
+  targetUrl    String
+  payloadJson  String
+  status       String      // SUCCESS, FAILED
+  responseCode Int?
+  error        String?
+  createdAt    DateTime    @default(now())
+
+  @@index([createdAt])
+}

@@ -1,0 +1,230 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Proofloop API",
+    "version": "1.0.0",
+    "description": "Proofloop helps buyers and small sellers keep a clear record of what was agreed, what was paid, and what happened after checkout."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
+    }
+  ],
+  "paths": {
+    "/api/products": {
+      "get": {
+        "summary": "List demo products",
+        "responses": {
+          "200": {
+            "description": "Array of products with policies and shipping options"
+          }
+        }
+      }
+    },
+    "/api/channel3/search": {
+      "post": {
+        "summary": "Natural-language product discovery via Channel3",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "query": { "type": "string" }
+                },
+                "required": ["query"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Discovered product offerings" }
+        }
+      }
+    },
+    "/api/promise/generate": {
+      "post": {
+        "summary": "Generate AI-assisted Promise Card preview from buyer need and seller policy",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": { "type": "string" },
+                  "quantity": { "type": "integer" },
+                  "shippingOptionId": { "type": "string" },
+                  "buyerRequirement": { "type": "string" }
+                },
+                "required": ["productId", "shippingOptionId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Promise Card preview with integrity hash and warnings" }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "summary": "Create draft order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "buyerName": { "type": "string" },
+                  "buyerEmail": { "type": "string", "format": "email" },
+                  "buyerRequirement": { "type": "string" },
+                  "productId": { "type": "string" },
+                  "quantity": { "type": "integer" },
+                  "shippingOptionId": { "type": "string" }
+                },
+                "required": ["buyerName", "buyerEmail", "productId", "shippingOptionId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Draft order created" }
+        }
+      },
+      "get": {
+        "summary": "Query orders with filters",
+        "parameters": [
+          { "name": "paymentState", "in": "query", "schema": { "type": "string" } },
+          { "name": "fulfillmentState", "in": "query", "schema": { "type": "string" } },
+          { "name": "driftStatus", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List of orders" }
+        }
+      }
+    },
+    "/api/orders/{id}/confirm-promise": {
+      "post": {
+        "summary": "Buyer explicitly reviews and confirms the Promise Card",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "buyerConfirmed": { "type": "boolean" },
+                  "sellerDeliveryEstimate": { "type": "string" },
+                  "returnPolicySummary": { "type": "string" },
+                  "warnings": { "type": "array", "items": { "type": "string" } },
+                  "hash": { "type": "string" }
+                },
+                "required": ["buyerConfirmed", "sellerDeliveryEstimate", "returnPolicySummary", "hash"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Immutable Promise Card locked to order" }
+        }
+      }
+    },
+    "/api/paypal/create-order": {
+      "post": {
+        "summary": "Create PayPal Sandbox checkout order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "orderId": { "type": "string" }
+                },
+                "required": ["orderId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "PayPal order ID created" }
+        }
+      }
+    },
+    "/api/paypal/capture-order": {
+      "post": {
+        "summary": "Capture PayPal payment on server and verify completion",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "orderId": { "type": "string" },
+                  "paypalOrderId": { "type": "string" }
+                },
+                "required": ["orderId", "paypalOrderId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Payment captured and order marked COMPLETED" }
+        }
+      }
+    },
+    "/api/orders/{id}/fulfillment": {
+      "post": {
+        "summary": "Record demo fulfillment update and trigger Promise Drift Detector",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": { "type": "string", "enum": ["PROCESSING", "SHIPPED", "DELAYED", "DELIVERED", "CANCELLED"] },
+                  "carrier": { "type": "string" },
+                  "trackingNumber": { "type": "string" },
+                  "note": { "type": "string" },
+                  "estimatedDelivery": { "type": "string" }
+                },
+                "required": ["status"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Fulfillment event stored and drift checked" }
+        }
+      }
+    },
+    "/api/audit": {
+      "get": {
+        "summary": "Get searchable audit events",
+        "responses": {
+          "200": { "description": "Audit event history" }
+        }
+      }
+    },
+    "/api/integrations/status": {
+      "get": {
+        "summary": "Check status of tech integrations",
+        "responses": {
+          "200": { "description": "Integration connectivity states" }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+  "info": {
+    "name": "Proofloop API Collection",
+    "description": "Runnable Postman collection for Proofloop: PromiseCheck, PayPal Sandbox Checkout, Promise Drift Detector, Channel3 Product Search, and Fulfillment Updates.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Get Demo Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "products"]
+        }
+      }
+    },
+    {
+      "name": "2. Channel3 Natural Language Product Search",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"ergonomic mechanical keyboard\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/channel3/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "channel3", "search"]
+        }
+      }
+    },
+    {
+      "name": "3. Generate Promise Card Preview",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"productId\": \"prod_aero_01\",\n  \"quantity\": 1,\n  \"shippingOptionId\": \"ship_std\",\n  \"buyerRequirement\": \"Need it before Friday for an upcoming flight.\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/promise/generate",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "promise", "generate"]
+        }
+      }
+    },
+    {
+      "name": "4. Create Order",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"buyerName\": \"Jane Doe\",\n  \"buyerEmail\": \"jane.doe@example.com\",\n  \"buyerRequirement\": \"Need delivered before Friday\",\n  \"productId\": \"prod_aero_01\",\n  \"quantity\": 1,\n  \"shippingOptionId\": \"ship_std\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders"]
+        }
+      }
+    },
+    {
+      "name": "5. Confirm Promise Card (Immutable Lock)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"buyerConfirmed\": true,\n  \"sellerDeliveryEstimate\": \"3-5 business days\",\n  \"returnPolicySummary\": \"30-day money-back guarantee; free returns on defective units.\",\n  \"warnings\": [],\n  \"hash\": \"plp_sample_hash\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders/{{orderId}}/confirm-promise",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders", "{{orderId}}", "confirm-promise"]
+        }
+      }
+    },
+    {
+      "name": "6. Simulate Sandbox Payment (No credentials needed)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/orders/{{orderId}}/simulate-payment",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders", "{{orderId}}", "simulate-payment"]
+        }
+      }
+    },
+    {
+      "name": "7. Add Fulfillment Update & Run Promise Drift Detector",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"status\": \"DELAYED\",\n  \"carrier\": \"FedEx Priority\",\n  \"trackingNumber\": \"782910482910\",\n  \"note\": \"Weather delay in transit. New ETA is Monday next week.\",\n  \"estimatedDelivery\": \"2026-11-12T18:00:00.000Z\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/orders/{{orderId}}/fulfillment",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders", "{{orderId}}", "fulfillment"]
+        }
+      }
+    },
+    {
+      "name": "8. Get Order Detail with Promise Card and Drift",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/orders/{{orderId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "orders", "{{orderId}}"]
+        }
+      }
+    },
+    {
+      "name": "9. Search Order Knowledge (Elastic Integration)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/search?q=Friday",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "search"],
+          "query": [
+            { "key": "q", "value": "Friday" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "10. Check Live Integrations Status",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/integrations/status",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "integrations", "status"]
+        }
+      }
+    }
+  ]
+}
