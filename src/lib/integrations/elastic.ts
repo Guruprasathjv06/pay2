@@ -14,7 +14,26 @@ export interface ElasticSearchResultItem {
 export function isElasticConfigured(): boolean {
   const url = process.env.ELASTICSEARCH_URL;
   const key = process.env.ELASTICSEARCH_API_KEY;
-  return Boolean(url && key && url.length > 5 && key.length > 5);
+  const user = process.env.ELASTICSEARCH_USERNAME;
+  const pass = process.env.ELASTICSEARCH_PASSWORD;
+  return Boolean(url && url.length > 5 && ((key && key.length > 5) || (user && pass)));
+}
+
+export function getElasticAuthHeader(): string | null {
+  if (process.env.ELASTICSEARCH_API_KEY) {
+    const key = process.env.ELASTICSEARCH_API_KEY.trim();
+    if (key.startsWith('ApiKey ') || key.startsWith('Basic ')) {
+      return key;
+    }
+    return `ApiKey ${key}`;
+  }
+  if (process.env.ELASTICSEARCH_USERNAME && process.env.ELASTICSEARCH_PASSWORD) {
+    const token = Buffer.from(
+      `${process.env.ELASTICSEARCH_USERNAME}:${process.env.ELASTICSEARCH_PASSWORD}`
+    ).toString('base64');
+    return `Basic ${token}`;
+  }
+  return null;
 }
 
 export async function searchOrderKnowledge(query: string): Promise<{
@@ -29,12 +48,17 @@ export async function searchOrderKnowledge(query: string): Promise<{
   if (isElasticConfigured()) {
     try {
       const url = `${process.env.ELASTICSEARCH_URL}/proofloop_orders/_search`;
+      const authHeader = getElasticAuthHeader();
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+      };
+      if (authHeader) {
+        headers['Authorization'] = authHeader;
+      }
+
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          Authorization: `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({
           query: {
             multi_match: {
@@ -139,4 +163,42 @@ export async function searchOrderKnowledge(query: string): Promise<{
       category: r.sourceType,
     })),
   };
+}
+
+export async function indexOrderToElastic(order: {
+  id: string;
+  orderNumber: string;
+  buyerName: string;
+  productName?: string;
+  buyerRequirement?: string;
+  returnPolicy?: string;
+  snippet?: string;
+  sourceType?: string;
+}): Promise<boolean> {
+  if (!isElasticConfigured()) return false;
+  try {
+    const url = `${process.env.ELASTICSEARCH_URL}/proofloop_orders/_doc/${order.id}`;
+    const authHeader = getElasticAuthHeader();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (authHeader) headers['Authorization'] = authHeader;
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({
+        orderNumber: order.orderNumber,
+        buyerName: order.buyerName,
+        productName: order.productName || 'Order Item',
+        buyerRequirement: order.buyerRequirement || '',
+        returnPolicy: order.returnPolicy || '',
+        snippet: order.snippet || `Order ${order.orderNumber}`,
+        sourceType: order.sourceType || 'promise_card',
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
