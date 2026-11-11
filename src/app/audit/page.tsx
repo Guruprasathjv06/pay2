@@ -13,7 +13,7 @@ import {
   CheckCircle2,
   ExternalLink,
 } from 'lucide-react';
-import { AuditEvent, EventSource } from '@/types';
+import { AuditEvent, EventSource } from '../../types';
 import Link from 'next/link';
 
 export default function AuditPage() {

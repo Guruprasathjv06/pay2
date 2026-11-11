@@ -17,7 +17,7 @@ import {
   CreditCard,
   History,
 } from 'lucide-react';
-import { Order, FulfillmentState } from '@/types';
+import { Order, FulfillmentState } from '../../../types';
 import { PromiseCardView } from '../../../components/PromiseCardView';
 import { DriftAlertCard } from '../../../components/DriftAlertCard';
 import { OrderTimelineComponent } from '../../../components/OrderTimelineComponent';

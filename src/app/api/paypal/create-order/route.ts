@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { createPayPalOrder, getPayPalConfig } from '@/lib/paypal';
+import { db } from '../../../../lib/db';
+import { createPayPalOrder, getPayPalConfig } from '../../../../lib/paypal';
 
 const Schema = z.object({
   orderId: z.string().min(1),

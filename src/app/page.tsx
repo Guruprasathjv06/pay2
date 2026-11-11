@@ -15,7 +15,7 @@ import {
   History,
   Search,
 } from 'lucide-react';
-import { Order } from '@/types';
+import { Order } from '../types';
 
 export default function LandingPage() {
   const [stats, setStats] = useState({

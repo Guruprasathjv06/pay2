@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { capturePayPalOrder } from '@/lib/paypal';
-import { dispatchZapierWebhook } from '@/lib/integrations/zapier';
+import { db } from '../../../../lib/db';
+import { capturePayPalOrder } from '../../../../lib/paypal';
+import { dispatchZapierWebhook } from '../../../../lib/integrations/zapier';
 
 const Schema = z.object({
   orderId: z.string().min(1),

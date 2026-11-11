@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
+import { db } from '../../../lib/db';
 
 const CreateOrderSchema = z.object({
   buyerName: z.string().min(2, 'Name must be at least 2 characters'),

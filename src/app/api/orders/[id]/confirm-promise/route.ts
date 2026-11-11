@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { dispatchZapierWebhook } from '@/lib/integrations/zapier';
+import { db } from '../../../../../lib/db';
+import { dispatchZapierWebhook } from '../../../../../lib/integrations/zapier';
 
 const ConfirmPromiseSchema = z.object({
   buyerConfirmed: z.boolean().refine(v => v === true, 'You must review and confirm the Promise Card agreement to proceed.'),

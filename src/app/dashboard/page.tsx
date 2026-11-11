@@ -14,7 +14,7 @@ import {
   RefreshCw,
   Clock,
 } from 'lucide-react';
-import { Order, PaymentState, FulfillmentState, DriftStatus } from '@/types';
+import { Order, PaymentState, FulfillmentState, DriftStatus } from '../../types';
 
 export default function SellerDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);

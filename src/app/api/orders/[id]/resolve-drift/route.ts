@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { dispatchZapierWebhook } from '@/lib/integrations/zapier';
+import { db } from '../../../../../lib/db';
+import { dispatchZapierWebhook } from '../../../../../lib/integrations/zapier';
 
 const Schema = z.object({
   alertId: z.string().min(1),

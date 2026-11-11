@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { detectPromiseDrift } from '@/lib/ai/promise-ai';
-import { dispatchZapierWebhook } from '@/lib/integrations/zapier';
+import { db } from '../../../../../lib/db';
+import { detectPromiseDrift } from '../../../../../lib/ai/promise-ai';
+import { dispatchZapierWebhook } from '../../../../../lib/integrations/zapier';
 
 const FulfillmentSchema = z.object({
   status: z.enum(['PROCESSING', 'SHIPPED', 'DELAYED', 'DELIVERED', 'CANCELLED']),

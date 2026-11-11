@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { searchOrderKnowledge, isElasticConfigured } from '@/lib/integrations/elastic';
+import { searchOrderKnowledge, isElasticConfigured } from '../../../lib/integrations/elastic';
 
 export async function GET(request: NextRequest) {
   try {

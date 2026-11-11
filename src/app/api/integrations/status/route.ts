@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { getPayPalConfig } from '@/lib/paypal';
-import { isChannel3Configured } from '@/lib/integrations/channel3';
-import { isElasticConfigured } from '@/lib/integrations/elastic';
-import { isZapierConfigured } from '@/lib/integrations/zapier';
-import { isAstropodsConfigured, getAstropodsTelemetry } from '@/lib/integrations/astropods';
-import { checkPostgresConnection } from '@/lib/db';
+import { getPayPalConfig } from '../../../../lib/paypal';
+import { isChannel3Configured } from '../../../../lib/integrations/channel3';
+import { isElasticConfigured } from '../../../../lib/integrations/elastic';
+import { isZapierConfigured } from '../../../../lib/integrations/zapier';
+import { isAstropodsConfigured, getAstropodsTelemetry } from '../../../../lib/integrations/astropods';
+import { checkPostgresConnection } from '../../../../lib/db';
 
 export const dynamic = 'force-dynamic';
 

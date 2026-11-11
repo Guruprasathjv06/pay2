@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { searchChannel3, isChannel3Configured } from '@/lib/integrations/channel3';
+import { searchChannel3, isChannel3Configured } from '../../../../lib/integrations/channel3';
 
 const Schema = z.object({
   query: z.string().min(1, 'Search query is required'),

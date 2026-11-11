@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { OrdersAgGrid } from '../../components/OrdersAgGrid';
 import { BarChart3, TrendingUp, AlertTriangle, ShieldCheck, CreditCard, Sparkles } from 'lucide-react';
-import { Order } from '@/types';
+import { Order } from '../../types';
 
 export default function AnalyticsPage() {
   const [orders, setOrders] = useState<Order[]>([]);

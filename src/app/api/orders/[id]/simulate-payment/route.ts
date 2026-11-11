@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { dispatchZapierWebhook } from '@/lib/integrations/zapier';
+import { db } from '../../../../../lib/db';
+import { dispatchZapierWebhook } from '../../../../../lib/integrations/zapier';
 
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { db } from '@/lib/db';
-import { generatePromiseCard } from '@/lib/ai/promise-ai';
+import { db } from '../../../../lib/db';
+import { generatePromiseCard } from '../../../../lib/ai/promise-ai';
 
 const GeneratePromiseSchema = z.object({
   productId: z.string().min(1),

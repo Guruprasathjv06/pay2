@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getPayPalConfig } from '@/lib/paypal';
+import { getPayPalConfig } from '../../../../lib/paypal';
 
 export async function GET() {
   const config = getPayPalConfig();
