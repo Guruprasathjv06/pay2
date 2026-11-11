@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { OrdersAgGrid } from '@/components/OrdersAgGrid';
+import { OrdersAgGrid } from '../../components/OrdersAgGrid';
 import { BarChart3, TrendingUp, AlertTriangle, ShieldCheck, CreditCard, Sparkles } from 'lucide-react';
 import { Order } from '@/types';
 

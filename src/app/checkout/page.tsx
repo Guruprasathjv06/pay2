@@ -15,9 +15,9 @@ import {
   Lock,
 } from 'lucide-react';
 import { Product, ShippingOption } from '@/types';
-import { PromiseCardView } from '@/components/PromiseCardView';
-import { PayPalButtonWrapper } from '@/components/PayPalButtonWrapper';
-import { Channel3SearchModal } from '@/components/Channel3SearchModal';
+import { PromiseCardView } from '../../components/PromiseCardView';
+import { PayPalButtonWrapper } from '../../components/PayPalButtonWrapper';
+import { Channel3SearchModal } from '../../components/Channel3SearchModal';
 
 export default function CheckoutPage() {
   const router = useRouter();

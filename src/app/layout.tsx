@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import './globals.css';
-import { Navbar } from '@/components/Navbar';
-import { DemoBanner } from '@/components/DemoBanner';
-import { IntegrationsModal } from '@/components/IntegrationsModal';
+import { Navbar } from '../components/Navbar';
+import { DemoBanner } from '../components/DemoBanner';
+import { IntegrationsModal } from '../components/IntegrationsModal';
 import { ShieldCheck, Heart } from 'lucide-react';
 import Link from 'next/link';
 

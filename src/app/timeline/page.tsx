@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { OrderTimelineComponent } from '@/components/OrderTimelineComponent';
+import { OrderTimelineComponent } from '../../components/OrderTimelineComponent';
 import { Clock, Layers, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Order } from '@/types';
 
