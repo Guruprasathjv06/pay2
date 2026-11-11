@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ShieldCheck, Clock, RotateCcw, AlertTriangle, Truck, Tag, Lock } from 'lucide-react';
-import { PromiseCard } from '@/types';
+import { PromiseCard } from '../types';
 
 interface PromiseCardViewProps {
   card: Partial<PromiseCard> & {

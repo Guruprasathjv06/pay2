@@ -3,7 +3,7 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { ColDef, GridReadyEvent } from 'ag-grid-community';
-import { Order } from '@/types';
+import { Order } from '../types';
 import { Search, Sparkles, Filter, ExternalLink, ArrowUpDown } from 'lucide-react';
 import Link from 'next/link';
 

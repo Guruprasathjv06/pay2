@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import 'ag-grid-community/styles/ag-grid.css';
-@import 'ag-grid-community/styles/ag-theme-quartz.css';
-
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;

@@ -12,7 +12,7 @@ import {
   Layers,
   Sparkles,
 } from 'lucide-react';
-import { Order } from '@/types';
+import { Order } from '../types';
 
 interface OrderTimelineComponentProps {
   order: Order;

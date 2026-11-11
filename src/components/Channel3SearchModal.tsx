@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { X, Search, Sparkles, ArrowRight, ExternalLink, ShieldCheck } from 'lucide-react';
-import { Channel3ProductResult } from '@/types';
+import { Channel3ProductResult } from '../types';
 
 interface Channel3SearchModalProps {
   isOpen: boolean;

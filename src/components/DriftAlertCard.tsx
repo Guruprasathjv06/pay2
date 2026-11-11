@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { AlertTriangle, CheckCircle2, Copy, Check, MessageSquare, ShieldAlert, Sparkles, ArrowRight } from 'lucide-react';
-import { DriftAlert } from '@/types';
+import { DriftAlert } from '../types';
 
 interface DriftAlertCardProps {
   alert: DriftAlert;
