@@ -58,10 +58,13 @@ export async function POST(request: NextRequest) {
       orderNumber: order.orderNumber,
       orderId: order.id,
       productName: order.promiseCard?.productName || order.product?.name || 'Item',
+      buyerName: order.buyerName,
+      buyerEmail: order.buyerEmail,
       amountFormatted: `$${(order.totalCents / 100).toFixed(2)}`,
       currency: order.currency,
       status: 'COMPLETED',
       summary: `PayPal Sandbox captured $${(order.totalCents / 100).toFixed(2)} USD for ${order.orderNumber}.`,
+      idempotencyKey: `zapier_pay_${captureResult.captureId}`,
     }).catch(() => {});
 
     return NextResponse.json({

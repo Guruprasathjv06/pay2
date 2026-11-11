@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
+import { dispatchZapierWebhook } from '@/lib/integrations/zapier';
 
 const ConfirmPromiseSchema = z.object({
   buyerConfirmed: z.boolean().refine(v => v === true, 'You must review and confirm the Promise Card agreement to proceed.'),
@@ -43,6 +44,28 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       isImmutable: true,
       demoNotice: 'Proofloop Sandbox Demo Order - No real funds or real-world shipment.',
     });
+
+    // Notify Zapier if configured
+    dispatchZapierWebhook({
+      event: 'PROMISE_CONFIRMED',
+      timestamp: new Date().toISOString(),
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      productName: savedCard.productName,
+      buyerName: order.buyerName,
+      buyerEmail: order.buyerEmail,
+      buyerRequirement: order.buyerRequirement,
+      amountFormatted: `$${(order.totalCents / 100).toFixed(2)}`,
+      currency: order.currency,
+      status: 'PROMISE_LOCKED',
+      summary: `Buyer confirmed immutable Promise Card for ${order.orderNumber}.`,
+      details: {
+        hash: validated.hash,
+        sellerDeliveryEstimate: validated.sellerDeliveryEstimate,
+        returnPolicySummary: validated.returnPolicySummary,
+      },
+      idempotencyKey: `promise_lock_${order.id}`,
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, promiseCard: savedCard });
   } catch (err: any) {

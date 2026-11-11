@@ -48,10 +48,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       orderNumber: order.orderNumber,
       orderId: order.id,
       productName: order.promiseCard?.productName || order.product?.name || 'Item',
+      buyerName: order.buyerName,
+      buyerEmail: order.buyerEmail,
       amountFormatted: `$${(order.totalCents / 100).toFixed(2)}`,
       currency: order.currency,
       status: 'COMPLETED (SIMULATED)',
       summary: `Simulated Demo capture completed for ${order.orderNumber}.`,
+      idempotencyKey: `zapier_sim_${order.id}`,
     }).catch(() => {});
 
     return NextResponse.json({

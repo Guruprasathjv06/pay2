@@ -86,10 +86,19 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
           orderNumber: order.orderNumber,
           orderId: order.id,
           productName: order.promiseCard.productName,
+          buyerName: order.buyerName,
+          buyerEmail: order.buyerEmail,
           amountFormatted: `$${(order.totalCents / 100).toFixed(2)}`,
           currency: order.currency,
           status: validated.status,
+          severity: driftResult.severity,
           summary: `Promise Drift Alert: ${driftResult.title}`,
+          details: {
+            mismatchExplanation: driftResult.mismatchExplanation,
+            carrier: validated.carrier,
+            trackingNumber: validated.trackingNumber,
+          },
+          idempotencyKey: `drift_${order.id}_${event.id}`,
         }).catch(() => {});
       } else {
         // Milestone update webhook
@@ -99,10 +108,18 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
           orderNumber: order.orderNumber,
           orderId: order.id,
           productName: order.promiseCard.productName,
+          buyerName: order.buyerName,
+          buyerEmail: order.buyerEmail,
           amountFormatted: `$${(order.totalCents / 100).toFixed(2)}`,
           currency: order.currency,
           status: validated.status,
           summary: `Fulfillment status changed to ${validated.status}`,
+          details: {
+            carrier: validated.carrier,
+            trackingNumber: validated.trackingNumber,
+            note: validated.note,
+          },
+          idempotencyKey: `fulfil_${order.id}_${event.id}`,
         }).catch(() => {});
       }
     }
